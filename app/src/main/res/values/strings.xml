@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Aaron Swartz Simulator</string>
+    <string name="true_text">Verdadero</string>
+    <string name="false_text">Falso</string>
+    <string name="next_text">Siguiente</string>
+    <string name="back_text">Atras</string>
 </resources>
