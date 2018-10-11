@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:gravity="top">
+            android:gravity="top"
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,7 +55,18 @@
                     android:id="@+id/falseButton"
                     android:text="@string/false_text" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
 
+                <Button
+                    android:id="@+id/pistaButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pista_text" />
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

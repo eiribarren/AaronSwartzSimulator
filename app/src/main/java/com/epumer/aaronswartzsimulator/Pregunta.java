@@ -1,12 +1,16 @@
 package com.epumer.aaronswartzsimulator;
 
+import android.graphics.drawable.Drawable;
+
 public class Pregunta {
     protected String text;
     protected boolean respuesta;
+    protected int pista;
 
-    public Pregunta(String text, boolean respuesta) {
+    public Pregunta(String text, boolean respuesta, int pista) {
         this.text = text;
         this.respuesta = respuesta;
+        this.pista = pista;
     }
 
     public boolean comprobarRespuesta(boolean respuesta) {
@@ -21,4 +25,7 @@ public class Pregunta {
         return text;
     }
 
+    public int getPista() {
+        return pista;
+    }
 }
