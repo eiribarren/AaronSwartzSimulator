@@ -3,12 +3,12 @@ package com.epumer.aaronswartzsimulator;
 import android.graphics.drawable.Drawable;
 
 public class Pregunta {
-    protected String text;
+    protected int idPregunta;
     protected boolean respuesta;
     protected int pista;
 
-    public Pregunta(String text, boolean respuesta, int pista) {
-        this.text = text;
+    public Pregunta(int idPregunta, boolean respuesta, int pista) {
+        this.idPregunta = idPregunta;
         this.respuesta = respuesta;
         this.pista = pista;
     }
@@ -21,8 +21,8 @@ public class Pregunta {
         }
     }
 
-    public String getText() {
-        return text;
+    public int getId() {
+        return idPregunta;
     }
 
     public int getPista() {

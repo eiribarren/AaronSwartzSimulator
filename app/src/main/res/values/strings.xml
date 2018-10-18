@@ -6,4 +6,10 @@
     <string name="back_text">Atras</string>
     <string name="title_activity_pista">PistaActivity</string>
     <string name="pista_text">Pista</string>
+    <string name="primera_pregunta">¿Está Aaron Swartz vivo?</string>
+    <string name="segunda_pregunta">¿Consiguió Aaron Swartz robar en la biblioteca?</string>
+    <string name="tercera_pregunta">¿Es Aaron Swartz el putisimo?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

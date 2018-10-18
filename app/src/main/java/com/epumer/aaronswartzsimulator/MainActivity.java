@@ -2,7 +2,10 @@ package com.epumer.aaronswartzsimulator;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.PersistableBundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,86 +16,54 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements MainFragment.MainFragmentListener,
+               PistaFragment.PistaFragmentListener{
 
-    public final static String CLAU_EXTRA_PISTA = "com.epumer.aaronswartzsimulator.pistaPreguntaActual";
-    public final static String CLAU_EXTRA_PREGUNTA = "com.epumer.aaronswartzsimulator.preguntaActual";
-    protected Button trueButton, falseButton, nextButton, backButton, pistaButton;
-    protected Pregunta[] preguntas = { new Pregunta("¿Está Aaron Swartz vivo?", false, R.drawable.drop_database_to_the_ground),
-                                       new Pregunta("¿Consiguió Aaron Swartz robar en la biblioteca?", true, R.drawable.portaaviones_a_pique),
-                                       new Pregunta("¿Es Aaron Swartz el putisimo?", true, R.drawable.muerto)};
+
+    protected Pregunta[] preguntas = { new Pregunta(R.string.primera_pregunta, false, R.drawable.drop_database_to_the_ground),
+            new Pregunta(R.string.segunda_pregunta, true, R.drawable.portaaviones_a_pique),
+            new Pregunta(R.string.tercera_pregunta, true, R.drawable.muerto)};
     protected int preguntaActual;
-    protected String preguntaAux;
+    protected MainFragment main;
+    protected PistaFragment pista;
+    protected int fragmentoActual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent intent = getIntent();
-        preguntaAux = intent.getStringExtra(CLAU_EXTRA_PREGUNTA);
-
-        trueButton = (Button)findViewById(R.id.trueButton);
-        falseButton = (Button)findViewById(R.id.falseButton);
-        nextButton = (Button)findViewById(R.id.nextButton);
-        backButton = (Button)findViewById(R.id.backButton);
-        pistaButton = (Button)findViewById(R.id.pistaButton);
-
+        main = new MainFragment();
+        pista = new PistaFragment();
+        try {
+            fragmentoActual = savedInstanceState.getInt("fragmentoActual");
+        } catch ( Exception e ) {
+            fragmentoActual = 0;
+        }
         try {
             preguntaActual = savedInstanceState.getInt("preguntaActual");
-        } catch (Exception e) {
-            if ( !("").equals(preguntaAux) ) {
-                for ( int i = 0 ; i < preguntas.length ; i++ ) {
-                    if ( preguntas[i].getText().equals(preguntaAux) ) {
-                        preguntaActual = i;
-                    }
-                }
-            } else {
-                preguntaActual = 0;
-            }
+        } catch ( Exception e ) {
+            preguntaActual = 0;
         }
-        ponerPregunta(preguntas[preguntaActual]);
-
-        trueButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                respuestaButtonListener(true);
-            }
-        });
-
-        falseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                respuestaButtonListener(false);
-            }
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextButtonListener();
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backButtonListener();
-            }
-        });
-
-        pistaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                abrirPista(preguntas[preguntaActual]);
-            }
-        });
+        if ( fragmentoActual == 0 ) {
+            abrirPregunta();
+        } else {
+            abrirPista();
+        }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("preguntaActual", preguntaActual);
+    public void abrirPista() {
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.mainFragment, pista)
+                                   .commit();
+        fragmentoActual = 1;
+    }
+
+    public void abrirPregunta() {
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.mainFragment, main)
+                                   .commit();
+        fragmentoActual = 0;
     }
 
     public void nextButtonListener() {
@@ -101,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             preguntaActual = 0;
         }
-        ponerPregunta(preguntas[preguntaActual]);
     }
 
     public void respuestaButtonListener(boolean respuesta) {
@@ -118,19 +88,24 @@ public class MainActivity extends AppCompatActivity {
         } else {
             preguntaActual = preguntas.length - 1;
         }
-        ponerPregunta(preguntas[preguntaActual]);
     }
 
-    public void ponerPregunta(Pregunta pregunta) {
-        TextView texto = (TextView)findViewById(R.id.pregunta_text);
-        texto.setText(pregunta.getText());
+    public Pregunta getPreguntaActual() {
+        return preguntas[preguntaActual];
     }
 
-    public void abrirPista(Pregunta pregunta) {
-        Intent pistaIntent = new Intent(this, PistaActivity2.class);
-        pistaIntent.putExtra(CLAU_EXTRA_PISTA,pregunta.getPista());
-        pistaIntent.putExtra(CLAU_EXTRA_PREGUNTA,pregunta.getText());
+    public int getPosicionActual() {
+        return preguntaActual;
+    }
 
-        startActivity(pistaIntent);
+    public void setPreguntaActual(int preguntaActual) {
+        this.preguntaActual = preguntaActual;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("fragmentoActual", fragmentoActual);
+        outState.putInt("preguntaActual", preguntaActual);
     }
 }
