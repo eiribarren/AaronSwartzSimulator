@@ -4,21 +4,26 @@ import android.graphics.drawable.Drawable;
 
 public class Pregunta {
     protected int idPregunta;
-    protected boolean respuesta;
+    protected Object respuesta;
     protected int pista;
 
-    public Pregunta(int idPregunta, boolean respuesta, int pista) {
+    public Pregunta(int idPregunta, Object respuesta, int pista) {
         this.idPregunta = idPregunta;
         this.respuesta = respuesta;
         this.pista = pista;
     }
 
-    public boolean comprobarRespuesta(boolean respuesta) {
-        if ( this.respuesta == respuesta ) {
-            return true;
+    public boolean comprobarRespuesta(Object respuesta) {
+        if ( respuesta instanceof String ) {
+            if ( ((String) respuesta).equals(this.respuesta)) {
+                return true;
+            }
         } else {
-            return false;
+            if (this.respuesta == respuesta) {
+                return true;
+            }
         }
+        return false;
     }
 
     public int getId() {

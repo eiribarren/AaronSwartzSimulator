@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/casualMode"
+        android:title="@string/casual_text"
+        android:icon="@drawable/chicken_icon" />
+    <item android:id="@+id/hardcoreMode"
+        android:title="@string/hardcore_text" />
+
+</menu>

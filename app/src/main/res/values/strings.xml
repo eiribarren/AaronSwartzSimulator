@@ -9,6 +9,27 @@
     <string name="primera_pregunta">¿Está Aaron Swartz vivo?</string>
     <string name="segunda_pregunta">¿Consiguió Aaron Swartz robar en la biblioteca?</string>
     <string name="tercera_pregunta">¿Es Aaron Swartz el putisimo?</string>
+    <string name="preguntar_si_continuar_final">Has alcanzado la última pregunta, si continuas volverás al principio ¿Estás seguro que deseas continuar?</string>
+    <string name="preguntar_si_continuar_principio">Has alcanzado la primera pregunta, si continuas volverás al principio ¿Estás seguro que deseas continuar?</string>
+    <string name="casual_text">Modo simple</string>
+    <string name="hardcore_text">Modo multirespuesta</string>
+    <string name="afirmativo">Si</string>
+    <string name="negativo">No</string>
+    <string name="primera_multipregunta">A Aaron Swartz le gusta el software...</string>
+    <string name="primera_multipregunta_primera_respuesta">Libre</string>
+    <string name="primera_multipregunta_segunda_respuesta">Gratis</string>
+    <string name="primera_multipregunta_tercera_respuesta">Sexy</string>
+    <string name="primera_multipregunta_cuarta_respuesta">Batman</string>
+    <string name="segunda_multipregunta">La causa de la MUERTE de Aaron Swartz fué...</string>
+    <string name="segunda_multipregunta_primera_respuesta">Caida de un sitio muy, muy alto</string>
+    <string name="segunda_multipregunta_segunda_respuesta">Ahorcamiento</string>
+    <string name="segunda_multipregunta_tercera_respuesta">El FBI le dió caza y lo mató (conspiración al canto)</string>
+    <string name="segunda_multipregunta_cuarta_respuesta">Batman</string>
+    <string name="tercera_multipregunta">Aaron Swartz era...</string>
+    <string name="tercera_multipregunta_primera_respuesta">El puto amo</string>
+    <string name="tercera_multipregunta_segunda_respuesta">Gratis</string>
+    <string name="tercera_multipregunta_tercera_respuesta">Sexy</string>
+    <string name="tercera_multipregunta_cuarta_respuesta">Batman</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
