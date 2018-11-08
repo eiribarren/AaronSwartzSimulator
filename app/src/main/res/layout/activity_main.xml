@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="?attr/actionBarSize"
         android:id="@+id/mainToolbar"></android.support.v7.widget.Toolbar>
     <FrameLayout android:name="com.epumer.aaronswartzsimulator.MainFragment"
         android:id="@+id/mainFragment"

@@ -1,6 +1,7 @@
 package com.epumer.aaronswartzsimulator;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,7 +20,9 @@ public class MainActivity extends AppCompatActivity
                PistaFragment.PistaFragmentListener,
                MultiRespuestaFragment.MultiRespuestaListener{
 
-
+    public static final String MY_PREFS = "AaronPreferences";
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
     protected PreguntaSiONo[] preguntasSiONo = { new PreguntaSiONo(R.string.primera_pregunta, false, R.drawable.drop_database_to_the_ground),
             new PreguntaSiONo(R.string.segunda_pregunta, true, R.drawable.portaaviones_a_pique),
             new PreguntaSiONo(R.string.tercera_pregunta, true, R.drawable.muerto)};
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
+        editor = prefs.edit();
         preguntasmulti = Arrays.asList(new PreguntaMultiRespuesta(R.string.primera_multipregunta, getResources().getString(R.string.primera_multipregunta_primera_respuesta), R.drawable.muerto, respuestasPrimeraPregunta),
                 new PreguntaMultiRespuesta(R.string.segunda_multipregunta, getResources().getString(R.string.segunda_multipregunta_segunda_respuesta), R.drawable.muerto, respuestasSegundaPregunta),
                 new PreguntaMultiRespuesta(R.string.tercera_multipregunta, getResources().getString(R.string.tercera_multipregunta_primera_respuesta), R.drawable.muerto, respuestasTerceraPregunta));
@@ -66,8 +71,11 @@ public class MainActivity extends AppCompatActivity
                 preguntaActual = 0;
                 if ( fragmentoActual == 0 ) {
                     main.ponerPregunta(preguntas[preguntaActual].getId());
+                    editor.putInt("preguntaActual", preguntaActual);
+
                 } else if ( fragmentoActual == 2 ) {
                     multi.ponerPregunta(preguntas[preguntaActual]);
+                    editor.putInt("preguntaActual", preguntaActual);
                 }
             }
         });
@@ -86,15 +94,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ad_principio = bob.create();
-        try {
-            fragmentoActual = savedInstanceState.getInt("fragmentoActual");
-        } catch ( Exception e ) {
-            fragmentoActual = 0;
-        }
-        try {
-            preguntaActual = savedInstanceState.getInt("preguntaActual");
-        } catch ( Exception e ) {
-            preguntaActual = 0;
+        fragmentoActual = prefs.getInt("fragmentoActual", 0 );
+        preguntaActual = prefs.getInt("preguntaActual", 0 );
+        if ( prefs.getInt("fragmentoAnterior", 0) == 0 ) {
+            preguntas = preguntasSiONo;
+        } else {
+            preguntas = (PreguntaMultiRespuesta[])preguntasmulti.toArray();
         }
         if ( fragmentoActual == 0 ) {
             abrirPregunta();
@@ -109,7 +114,12 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                                    .replace(R.id.mainFragment, pista)
                                    .commit();
+        if ( fragmentoActual != 1 ) {
+            editor.putInt("fragmentoAnterior", fragmentoActual);
+        }
         fragmentoActual = 1;
+        editor.putInt("fragmentoActual", fragmentoActual);
+        editor.apply();
     }
 
     public void abrirPregunta() {
@@ -117,7 +127,12 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                                    .replace(R.id.mainFragment, main)
                                    .commit();
+        if ( fragmentoActual != 0 ) {
+            editor.putInt("fragmentoAnterior", fragmentoActual);
+        }
         fragmentoActual = 0;
+        editor.putInt("fragmentoActual", fragmentoActual);
+        editor.apply();
     }
 
     public void abrirMultiPregunta() {
@@ -125,12 +140,19 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.mainFragment, multi)
                 .commit();
+        if ( fragmentoActual != 2 ) {
+            editor.putInt("fragmentoAnterior", fragmentoActual);
+        }
         fragmentoActual = 2;
+        editor.putInt("fragmentoActual", fragmentoActual);
+        editor.apply();
     }
 
     public void nextButtonListener() {
         if ( preguntaActual < preguntas.length - 1 ) {
             preguntaActual++;
+            editor.putInt("preguntaActual", preguntaActual);
+            editor.apply();
         } else {
             ad_final.show();
         }
@@ -147,6 +169,8 @@ public class MainActivity extends AppCompatActivity
     public void backButtonListener() {
         if ( preguntaActual > 0 ) {
             preguntaActual--;
+            editor.putInt("preguntaActual", preguntaActual);
+            editor.apply();
         } else {
             ad_principio.show();
         }
@@ -167,8 +191,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragmentoActual", fragmentoActual);
-        outState.putInt("preguntaActual", preguntaActual);
     }
 
     @Override
@@ -189,5 +211,16 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         return true;
+    }
+
+    public void abrirFragmentoAnterior() {
+        int fragmentoAnterior = prefs.getInt("fragmentoAnterior", 0);
+        if ( fragmentoAnterior == 0 ) {
+            abrirPregunta();
+        } else if ( fragmentoAnterior == 1 ){
+            abrirPista();
+        } else {
+            abrirMultiPregunta();
+        }
     }
 }

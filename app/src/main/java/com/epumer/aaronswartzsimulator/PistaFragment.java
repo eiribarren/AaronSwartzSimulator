@@ -77,7 +77,7 @@ public class PistaFragment extends Fragment {
         atrasButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.abrirPregunta();
+                mListener.abrirFragmentoAnterior();
             }
         });
         // Inflate the layout for this fragment
@@ -113,6 +113,6 @@ public class PistaFragment extends Fragment {
      */
     public interface PistaFragmentListener {
         // TODO: Update argument type and name
-        void abrirPregunta();
+        void abrirFragmentoAnterior();
     }
 }

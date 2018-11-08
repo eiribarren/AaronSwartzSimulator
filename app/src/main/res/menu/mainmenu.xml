@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/casualMode"
         android:title="@string/casual_text"
-        android:icon="@drawable/chicken_icon" />
+        android:icon="@drawable/chicken_icon"
+        app:showAsAction="always"/>
     <item android:id="@+id/hardcoreMode"
-        android:title="@string/hardcore_text" />
+        android:title="@string/hardcore_text"
+        android:icon="@mipmap/ic_launcher_round"
+        app:showAsAction="always"/>
 
 </menu>
