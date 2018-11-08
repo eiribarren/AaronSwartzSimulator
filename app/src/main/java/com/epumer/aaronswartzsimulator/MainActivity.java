@@ -2,6 +2,7 @@ package com.epumer.aaronswartzsimulator;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,19 +11,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements MainFragment.MainFragmentListener,
                PistaFragment.PistaFragmentListener,
-               MultiRespuestaFragment.MultiRespuestaListener{
+               MultiRespuestaFragment.MultiRespuestaListener,
+               HistorialFragment.HistorialFragmentListener {
 
     public static final String MY_PREFS = "AaronPreferences";
-    SharedPreferences prefs;
-    SharedPreferences.Editor editor;
     protected PreguntaSiONo[] preguntasSiONo = { new PreguntaSiONo(R.string.primera_pregunta, false, R.drawable.drop_database_to_the_ground),
             new PreguntaSiONo(R.string.segunda_pregunta, true, R.drawable.portaaviones_a_pique),
             new PreguntaSiONo(R.string.tercera_pregunta, true, R.drawable.muerto)};
@@ -36,6 +34,8 @@ public class MainActivity extends AppCompatActivity
     protected MainFragment main;
     protected PistaFragment pista;
     protected MultiRespuestaFragment multi;
+    protected HistorialFragment historial;
+    protected int fragmentoAnterior;
     protected int fragmentoActual;
     protected AlertDialog ad_final;
     protected AlertDialog ad_principio;
@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        prefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
-        editor = prefs.edit();
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS, MODE_PRIVATE);
         preguntasmulti = Arrays.asList(new PreguntaMultiRespuesta(R.string.primera_multipregunta, getResources().getString(R.string.primera_multipregunta_primera_respuesta), R.drawable.muerto, respuestasPrimeraPregunta),
                 new PreguntaMultiRespuesta(R.string.segunda_multipregunta, getResources().getString(R.string.segunda_multipregunta_segunda_respuesta), R.drawable.muerto, respuestasSegundaPregunta),
                 new PreguntaMultiRespuesta(R.string.tercera_multipregunta, getResources().getString(R.string.tercera_multipregunta_primera_respuesta), R.drawable.muerto, respuestasTerceraPregunta));
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity
         main = new MainFragment();
         pista = new PistaFragment();
         multi = new MultiRespuestaFragment();
+        historial = new HistorialFragment();
         mainToolbar = (Toolbar)findViewById(R.id.mainToolbar);
         setSupportActionBar(mainToolbar);
         AlertDialog.Builder bob = new AlertDialog.Builder(this);
@@ -71,11 +71,9 @@ public class MainActivity extends AppCompatActivity
                 preguntaActual = 0;
                 if ( fragmentoActual == 0 ) {
                     main.ponerPregunta(preguntas[preguntaActual].getId());
-                    editor.putInt("preguntaActual", preguntaActual);
 
                 } else if ( fragmentoActual == 2 ) {
                     multi.ponerPregunta(preguntas[preguntaActual]);
-                    editor.putInt("preguntaActual", preguntaActual);
                 }
             }
         });
@@ -105,8 +103,10 @@ public class MainActivity extends AppCompatActivity
             abrirPregunta();
         } else if ( fragmentoActual == 1 ) {
             abrirPista();
-        } else {
+        } else if ( fragmentoActual == 2 ){
             abrirMultiPregunta();
+        } else if ( fragmentoActual == 3 ) {
+            abrirHistorial();
         }
     }
 
@@ -115,11 +115,9 @@ public class MainActivity extends AppCompatActivity
                                    .replace(R.id.mainFragment, pista)
                                    .commit();
         if ( fragmentoActual != 1 ) {
-            editor.putInt("fragmentoAnterior", fragmentoActual);
+            fragmentoAnterior = fragmentoActual;
         }
         fragmentoActual = 1;
-        editor.putInt("fragmentoActual", fragmentoActual);
-        editor.apply();
     }
 
     public void abrirPregunta() {
@@ -128,11 +126,22 @@ public class MainActivity extends AppCompatActivity
                                    .replace(R.id.mainFragment, main)
                                    .commit();
         if ( fragmentoActual != 0 ) {
-            editor.putInt("fragmentoAnterior", fragmentoActual);
+            fragmentoAnterior = fragmentoActual;
+            if ( fragmentoActual == 2 ) {
+                preguntaActual = 0;
+            }
         }
         fragmentoActual = 0;
-        editor.putInt("fragmentoActual", fragmentoActual);
-        editor.apply();
+    }
+
+    public void abrirHistorial() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.mainFragment, historial)
+                .commit();
+        if ( fragmentoActual != 3 ) {
+            fragmentoAnterior = fragmentoActual;
+        }
+        fragmentoActual = 3;
     }
 
     public void abrirMultiPregunta() {
@@ -141,18 +150,17 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.mainFragment, multi)
                 .commit();
         if ( fragmentoActual != 2 ) {
-            editor.putInt("fragmentoAnterior", fragmentoActual);
+            fragmentoAnterior = fragmentoActual;
+            if ( fragmentoActual == 0 ) {
+                preguntaActual = 0;
+            }
         }
         fragmentoActual = 2;
-        editor.putInt("fragmentoActual", fragmentoActual);
-        editor.apply();
     }
 
     public void nextButtonListener() {
         if ( preguntaActual < preguntas.length - 1 ) {
             preguntaActual++;
-            editor.putInt("preguntaActual", preguntaActual);
-            editor.apply();
         } else {
             ad_final.show();
         }
@@ -169,8 +177,6 @@ public class MainActivity extends AppCompatActivity
     public void backButtonListener() {
         if ( preguntaActual > 0 ) {
             preguntaActual--;
-            editor.putInt("preguntaActual", preguntaActual);
-            editor.apply();
         } else {
             ad_principio.show();
         }
@@ -195,6 +201,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainmenu, menu);
         return true;
@@ -209,12 +216,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.hardcoreMode:
                 abrirMultiPregunta();
                 break;
+            case R.id.historial:
+                abrirHistorial();
+                break;
+            default:
+                super.onOptionsItemSelected(item);
         }
         return true;
     }
 
     public void abrirFragmentoAnterior() {
-        int fragmentoAnterior = prefs.getInt("fragmentoAnterior", 0);
         if ( fragmentoAnterior == 0 ) {
             abrirPregunta();
         } else if ( fragmentoAnterior == 1 ){
@@ -222,5 +233,15 @@ public class MainActivity extends AppCompatActivity
         } else {
             abrirMultiPregunta();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS, MODE_PRIVATE).edit();
+        editor.putInt("fragmentoAnterior", fragmentoAnterior);
+        editor.putInt("fragmentoActual", fragmentoActual);
+        editor.putInt("preguntaActual", preguntaActual);
+        editor.apply();
     }
 }
