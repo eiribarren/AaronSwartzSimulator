@@ -117,6 +117,7 @@ public class MultiRespuestaFragment extends Fragment {
         tv.setText(pregunta.getId());
         int[] respuestas = ((PreguntaMultiRespuesta)pregunta).getRespuestas();
         RadioButton rb;
+        rg.removeAllViews();
         for ( int respuesta : respuestas ) {
             rb = new RadioButton(getContext());
             rb.setText(respuesta);

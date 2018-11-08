@@ -64,7 +64,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 preguntaActual = 0;
-                main.ponerPregunta(preguntas[preguntaActual].getId());
+                if ( fragmentoActual == 0 ) {
+                    main.ponerPregunta(preguntas[preguntaActual].getId());
+                } else if ( fragmentoActual == 2 ) {
+                    multi.ponerPregunta(preguntas[preguntaActual]);
+                }
             }
         });
         ad_final = bob.create();
@@ -74,7 +78,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 preguntaActual = preguntas.length - 1;
-                main.ponerPregunta(preguntas[preguntaActual].getId());
+                if ( fragmentoActual == 0 ) {
+                    main.ponerPregunta(preguntas[preguntaActual].getId());
+                } else if ( fragmentoActual == 2 ) {
+                    multi.ponerPregunta(preguntas[preguntaActual]);
+                }
             }
         });
         ad_principio = bob.create();
