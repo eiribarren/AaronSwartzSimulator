@@ -6,6 +6,7 @@ public class Pregunta {
     protected int idPregunta;
     protected Object respuesta;
     protected int pista;
+    protected boolean respondida;
 
     public Pregunta(int idPregunta, Object respuesta, int pista) {
         this.idPregunta = idPregunta;
@@ -14,6 +15,7 @@ public class Pregunta {
     }
 
     public boolean comprobarRespuesta(Object respuesta) {
+        this.respondida = true;
         if ( respuesta instanceof String ) {
             if ( ((String) respuesta).equals(this.respuesta)) {
                 return true;
@@ -24,6 +26,14 @@ public class Pregunta {
             }
         }
         return false;
+    }
+
+    public boolean estaRespondida() {
+        return this.respondida;
+    }
+
+    public void desResponder() {
+        this.respondida = false;
     }
 
     public int getId() {

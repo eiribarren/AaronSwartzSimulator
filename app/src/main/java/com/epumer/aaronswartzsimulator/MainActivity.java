@@ -2,7 +2,6 @@ package com.epumer.aaronswartzsimulator;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,8 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -30,17 +36,15 @@ public class MainActivity extends AppCompatActivity
     int[] respuestasTerceraPregunta = {R.string.tercera_multipregunta_primera_respuesta, R.string.tercera_multipregunta_segunda_respuesta, R.string.tercera_multipregunta_tercera_respuesta, R.string.tercera_multipregunta_cuarta_respuesta};
     protected List<PreguntaMultiRespuesta> preguntasmulti;
 
-    protected int preguntaActual;
+    protected EditText et_nombre;
+    protected int preguntaActual, fragmentoAnterior, fragmentoActual, puntuacion;
     protected MainFragment main;
     protected PistaFragment pista;
     protected MultiRespuestaFragment multi;
-    protected HistorialFragment historial;
-    protected int fragmentoAnterior;
-    protected int fragmentoActual;
-    protected AlertDialog ad_final;
-    protected AlertDialog ad_principio;
+    protected AlertDialog ad_final, ad_principio, ad_todorespondido, ad_guardarnombre;
     protected Toolbar mainToolbar;
     protected Pregunta[] preguntas;
+    protected List<Puntuacion> puntuaciones = new ArrayList<Puntuacion>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +57,6 @@ public class MainActivity extends AppCompatActivity
         main = new MainFragment();
         pista = new PistaFragment();
         multi = new MultiRespuestaFragment();
-        historial = new HistorialFragment();
         mainToolbar = (Toolbar)findViewById(R.id.mainToolbar);
         setSupportActionBar(mainToolbar);
         AlertDialog.Builder bob = new AlertDialog.Builder(this);
@@ -92,8 +95,36 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ad_principio = bob.create();
+        bob.setMessage(R.string.todo_respondido);
+        bob.setPositiveButton(R.string.afirmativo, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ad_guardarnombre.show();
+            }
+        });
+        bob.setNegativeButton(R.string.negativo, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                reiniciarPartida();
+            }
+        });
+        ad_todorespondido = bob.create();
+        bob.setMessage(R.string.introducir_nombre);
+        View nombreView = getLayoutInflater().inflate(R.layout.alerta_guardar_puntuacion, null);
+        et_nombre = (EditText) nombreView.findViewById(R.id.guardarNombreText);
+        bob.setView(nombreView);
+        bob.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                guardarPuntuacion(et_nombre.getText().toString());
+                reiniciarPartida();
+            }
+        });
+        bob.setNegativeButton(null, null);
+        ad_guardarnombre = bob.create();
         fragmentoActual = prefs.getInt("fragmentoActual", 0 );
         preguntaActual = prefs.getInt("preguntaActual", 0 );
+        puntuacion = prefs.getInt("puntuacion", 0);
         if ( prefs.getInt("fragmentoAnterior", 0) == 0 ) {
             preguntas = preguntasSiONo;
         } else {
@@ -135,6 +166,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void abrirHistorial() {
+        HistorialFragment historial = new HistorialFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.mainFragment, historial)
                 .commit();
@@ -167,10 +199,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void respuestaButtonListener(Object respuesta) {
-        if ( preguntas[preguntaActual].comprobarRespuesta(respuesta) ) {
-            Toast.makeText(this, "Respuesta correcta!", Toast.LENGTH_SHORT).show();
+        if ( !preguntas[preguntaActual].estaRespondida()) {
+            if (preguntas[preguntaActual].comprobarRespuesta(respuesta)) {
+                Toast.makeText(this, "Respuesta correcta!", Toast.LENGTH_SHORT).show();
+                puntuacion++;
+            } else {
+                Toast.makeText(this, "Respuesta incorrecta!", Toast.LENGTH_SHORT).show();
+            }
+            boolean todoRespondido = true;
+            for ( Pregunta pregunta : preguntas ) {
+                if ( !pregunta.estaRespondida() ) {
+                    todoRespondido = false;
+                }
+            }
+            if ( todoRespondido ) {
+                ad_todorespondido.show();
+            }
         } else {
-            Toast.makeText(this, "Respuesta incorrecta!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Esta pregunta ya la has respondido!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -243,5 +289,29 @@ public class MainActivity extends AppCompatActivity
         editor.putInt("fragmentoActual", fragmentoActual);
         editor.putInt("preguntaActual", preguntaActual);
         editor.apply();
+    }
+
+    public List<Puntuacion> getPuntuaciones() {
+        return puntuaciones;
+    }
+
+    public void reiniciarPartida() {
+        preguntaActual = 0;
+        for ( Pregunta pregunta : preguntas ) {
+            pregunta.desResponder();
+        }
+        puntuacion = 0;
+        if ( fragmentoActual == 0 ) {
+            main.ponerPregunta(getPreguntaActual().getId());
+        } else {
+            multi.ponerPregunta(preguntas[preguntaActual]);
+        }
+    }
+
+    public void guardarPuntuacion(String nombre) {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm");
+        Calendar cal = Calendar.getInstance();
+        Puntuacion puntuacionActual = new Puntuacion(df.format(cal.getTime()), puntuacion, nombre);
+        puntuaciones.add(puntuacionActual);
     }
 }
