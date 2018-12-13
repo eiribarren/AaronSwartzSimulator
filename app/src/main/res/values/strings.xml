@@ -34,8 +34,11 @@
     <string name="tercera_multipregunta_tercera_respuesta">Sexy</string>
     <string name="tercera_multipregunta_cuarta_respuesta">Batman</string>
     <string name="introducir_nombre">Introduce tu nombre: </string>
+    <string name="introducir_pregunta">Introduce la pregunta y la respuesta</string>
     <string name="ok">Ok</string>
-
+    <string name="addPregunta_text">Añadir pregunta</string>
+    <string name="respuesta_text">¿Es verdadero?</string>
+    <string name="pregunta_text">Introduce la pregunta: </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

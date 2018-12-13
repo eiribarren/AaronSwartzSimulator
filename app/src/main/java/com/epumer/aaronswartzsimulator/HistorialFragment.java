@@ -62,7 +62,7 @@ public class HistorialFragment extends Fragment {
         // Inflate the layout for this fragment
         RecyclerView rv = view.findViewById(R.id.historial);
         rv.setHasFixedSize(true);
-        Collections.sort(mListener.getPuntuaciones());
+        mListener.getPuntuaciones();
         HistorialRecyclerView hrv = new HistorialRecyclerView(mListener.getPuntuaciones());
         rv.addItemDecoration(new DividerItemDecoration(this.getActivity(), LinearLayout.VERTICAL));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());

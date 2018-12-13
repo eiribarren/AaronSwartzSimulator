@@ -5,8 +5,8 @@ public class PreguntaMultiRespuesta extends Pregunta {
 
     protected int[] respuestas;
 
-    public PreguntaMultiRespuesta(int idPregunta, String respuestaCorrecta, int pista, int[] respuestas) {
-        super(idPregunta, respuestaCorrecta, pista);
+    public PreguntaMultiRespuesta(String pregunta, String respuestaCorrecta, int pista, int[] respuestas) {
+        super(pregunta, respuestaCorrecta, pista);
         this.respuestas = respuestas;
     }
 

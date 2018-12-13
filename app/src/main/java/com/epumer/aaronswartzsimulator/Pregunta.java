@@ -3,15 +3,21 @@ package com.epumer.aaronswartzsimulator;
 import android.graphics.drawable.Drawable;
 
 public class Pregunta {
-    protected int idPregunta;
+    protected String pregunta;
     protected Object respuesta;
     protected int pista;
     protected boolean respondida;
+    protected boolean tienePista = false;
 
-    public Pregunta(int idPregunta, Object respuesta, int pista) {
-        this.idPregunta = idPregunta;
+    public Pregunta(String pregunta, Object respuesta) {
+        this.pregunta = pregunta;
         this.respuesta = respuesta;
+    }
+
+    public Pregunta(String pregunta, Object respuesta, int pista) {
+        this(pregunta, respuesta);
         this.pista = pista;
+        this.tienePista = true;
     }
 
     public boolean comprobarRespuesta(Object respuesta) {
@@ -36,11 +42,13 @@ public class Pregunta {
         this.respondida = false;
     }
 
-    public int getId() {
-        return idPregunta;
+    public String getPregunta() {
+        return pregunta;
     }
 
     public int getPista() {
         return pista;
     }
+
+    public boolean tienePista() { return tienePista; };
 }

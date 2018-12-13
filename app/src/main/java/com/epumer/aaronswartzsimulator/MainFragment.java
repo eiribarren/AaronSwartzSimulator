@@ -66,8 +66,8 @@ public class MainFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-    public void ponerPregunta(int pregunta) {
-        texto.setText(getString(pregunta));
+    public void ponerPregunta(String pregunta) {
+        texto.setText(pregunta);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MainFragment extends Fragment {
         backButton = view.findViewById(R.id.backButton);
         pistaButton = view.findViewById(R.id.pistaButton);
         texto = view.findViewById(R.id.pregunta_text);
-        ponerPregunta(mListener.getPreguntaActual().getId());
+        ponerPregunta(mListener.getPreguntaActual().getPregunta());
         trueButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -104,7 +104,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.nextButtonListener();
-                ponerPregunta(mListener.getPreguntaActual().getId());
+                ponerPregunta(mListener.getPreguntaActual().getPregunta());
             }
         });
 
@@ -112,7 +112,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mListener.backButtonListener();
-                ponerPregunta(mListener.getPreguntaActual().getId());
+                ponerPregunta(mListener.getPreguntaActual().getPregunta());
             }
         });
 

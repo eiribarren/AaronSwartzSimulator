@@ -11,5 +11,7 @@
         app:showAsAction="always"/>
     <item android:id="@+id/historial"
         android:title="Historial" />
+    <item android:id="@+id/addPregunta"
+        android:title="@string/addPregunta_text" />
 
 </menu>
